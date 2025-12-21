@@ -1,0 +1,68 @@
+// sin import no reconoce el desarrollo
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import useGlobalReducer from "../hooks/useGlobalReducer";
+import { obtenerContactos, borrarContacto } from "../services/apiContactos";
+import ContactCard from "../components/ContactCard";
+
+export default function ContactList() {
+  const { store, dispatch } = useGlobalReducer();
+
+  useEffect(() => {
+    const cargar = async () => {
+      dispatch({ tipo: "EMPEZAR_CARGA" });
+      try {
+        const contactos = await obtenerContactos();
+        dispatch({ tipo: "CARGAR_CONTACTOS", contactos });
+      } catch (err) {
+        dispatch({ tipo: "ERROR_API", mensaje: err.message });
+      }
+    };
+    cargar();
+  }, [dispatch]);
+
+  const manejarBorrado = async (id) => {
+    try {
+      await borrarContacto(id);
+      const contactosActualizados = await obtenerContactos();
+      dispatch({ tipo: "CARGAR_CONTACTOS", contactos: contactosActualizados });
+    } catch (err) {
+      alert("Error al borrar: " + err.message);
+    }
+  };
+
+  return (
+    <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
+      <h1>Mis Contactos</h1>
+      <Link
+        to="/nuevo"
+        style={{
+          display: "inline-block",
+          background: "#2ecc71",
+          color: "white",
+          padding: "8px 16px",
+          textDecoration: "none",
+          borderRadius: "4px",
+          marginBottom: "20px"
+        }}
+      >
+        ➕ Añadir contacto
+      </Link>
+
+      {store.cargando && <p>⏳ Cargando...</p>}
+      {store.error && <p style={{ color: "red" }}>⚠️ {store.error}</p>}
+
+      {store.contactos.length === 0 ? (
+        <p>No tienes contactos. ¡Agrega uno!</p>
+      ) : (
+        store.contactos.map(contacto => (
+          <ContactCard
+            key={contacto.id}
+            contacto={contacto}
+            onEliminar={manejarBorrado}
+          />
+        ))
+      )}
+    </div>
+  );
+}

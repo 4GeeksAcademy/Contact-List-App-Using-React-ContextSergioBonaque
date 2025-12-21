@@ -1,6 +1,5 @@
-// src/services/apiContactos.js
-const BASE = "https://playground.4geeks.com/contact";
-const AGENDA = "sergio-28"; 
+const BASE = " https://playground.4geeks.com/contact/";
+const AGENDA = "milista-sergio-28"; 
 
 export const obtenerContactos = async () => {
   const res = await fetch(`${BASE}/agenda/${AGENDA}`);
