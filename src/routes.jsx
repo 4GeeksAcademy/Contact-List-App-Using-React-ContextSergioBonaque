@@ -9,7 +9,15 @@ import { Layout } from "./pages/Layout";
 import { Home } from "./pages/Home";
 import { Single } from "./pages/Single";
 import { Demo } from "./pages/Demo";
+import ContactList from "./pages/ContactList";
+import AñadirContactos from "./pages/AñadirContactos";
+//tener en cuenta los nombres, si no coincidenn no funciona...
+const routes = [
+  { path: "/", element: <ContactList /> },
+  { path: "/nuevo", element: <AñadirContactos /> },
+];
 
+export default routes;
 export const router = createBrowserRouter(
     createRoutesFromElements(
     // CreateRoutesFromElements function allows you to build route elements declaratively.
