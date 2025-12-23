@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import useGlobalReducer from "../hooks/useGlobalReducer";
-import { crearContacto, actualizarContacto, obtenerContactos } from "../services/apiContactos";
+import { crearContacto, actualizarContacto, obtenerContactos } from "../services/ApiContactos";
 
 export default function AddContact() {
   const { id } = useParams();

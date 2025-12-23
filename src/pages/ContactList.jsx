@@ -2,13 +2,13 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useGlobalReducer from "../hooks/useGlobalReducer";
-import { obtenerContactos, borrarContacto } from "../services/apiContactos";
+import { obtenerContactos, borrarContacto } from "../services/ApiContactos";
 import ContactCard from "../components/ContactCard";
 
 export default function ContactList() {
 
   const [contactos, setContactos] = useState([]);
-  
+  const { store,dispatch } = useGlobalReducer()
 
   useEffect(() => {
     const cargar = async () => {
@@ -38,7 +38,7 @@ export default function ContactList() {
     <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
       <h1>Mis Contactos</h1>
       <Link
-        to="/nuevo"
+        to="/add-contact"
         style={{
           display: "inline-block",
           background: "#2ecc71",

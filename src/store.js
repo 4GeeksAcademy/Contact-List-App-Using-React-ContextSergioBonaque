@@ -1,9 +1,11 @@
-export const initialStore = {
-  contactos: [],
-  loading: false,
-};
+export const initialStore = () => {
+  return {
+    contactos: [],
+    loading: false
+  }
+}
 
-export const reducer = (state, action) => {
+export default function storeReducer(store, action = {}) {
   switch (action.type) {
     case "SET_CONTACTOS":
       return { ...state, contactos: action.payload, loading: false };
@@ -17,6 +19,6 @@ export const reducer = (state, action) => {
     case "START_LOADING":
       return { ...state, loading: true };
     default:
-      return state;
+      throw Error('Unknown action.');
   }
 };
