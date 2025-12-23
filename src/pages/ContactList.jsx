@@ -1,25 +1,28 @@
 // sin import no reconoce el desarrollo
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useGlobalReducer from "../hooks/useGlobalReducer";
 import { obtenerContactos, borrarContacto } from "../services/apiContactos";
 import ContactCard from "../components/ContactCard";
 
 export default function ContactList() {
-  const { store, dispatch } = useGlobalReducer();
+
+  const [contactos, setContactos] = useState([]);
+  
 
   useEffect(() => {
     const cargar = async () => {
-      dispatch({ tipo: "EMPEZAR_CARGA" });
+
       try {
-        const contactos = await obtenerContactos();
-        dispatch({ tipo: "CARGAR_CONTACTOS", contactos });
+        const resultadoContactos = await obtenerContactos();
+        setContactos(resultadoContactos)
+
       } catch (err) {
-        dispatch({ tipo: "ERROR_API", mensaje: err.message });
+
       }
     };
     cargar();
-  }, [dispatch]);
+  }, []);
 
   const manejarBorrado = async (id) => {
     try {

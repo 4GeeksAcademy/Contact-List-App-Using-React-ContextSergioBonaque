@@ -12,12 +12,12 @@ import { Demo } from "./pages/Demo";
 import ContactList from "./pages/ContactList";
 import AddContact from "./pages/AddContact";
 //tener en cuenta los nombres, si no coincidenn no funciona...
-const routes = [
-  { path: "/", element: <ContactList /> },
-  { path: "/nuevo", element: <AddContact /> },
-];
+// const routes = [
+//   { path: "/", element: <ContactList /> },
+//   { path: "/nuevo", element: <AddContact /> },
+// ];
 
-export default routes;
+// export default routes;
 export const router = createBrowserRouter(
     createRoutesFromElements(
     // CreateRoutesFromElements function allows you to build route elements declaratively.
@@ -30,7 +30,7 @@ export const router = createBrowserRouter(
       <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>} >
 
         {/* Nested Routes: Defines sub-routes within the BaseHome component. */}
-        <Route path= "/" element={<Home />} />
+        <Route path= "/" element={<ContactList />} />
         <Route path="/single/:theId" element={ <Single />} />  {/* Dynamic route for single items */}
         <Route path="/demo" element={<Demo />} />
       </Route>
