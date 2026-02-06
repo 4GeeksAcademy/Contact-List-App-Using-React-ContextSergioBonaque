@@ -8,17 +8,26 @@ export default function AddContact() {
   const navigate = useNavigate();
   const { store, dispatch } = useGlobalReducer();
 
+  // pendiente de mentoria
   const [form, setForm] = useState({
-    full_name: "",
+    name: "",
     email: "",
     phone: "",
     address: "",
   });
 
+  // Rellenar el formulario si estamos editando
   useEffect(() => {
-    if (id) {
+    if (id && store.contactos.length > 0) {
       const contacto = store.contactos.find(c => c.id == id);
-      if (contacto) setForm(contacto);
+      if (contacto) {
+        setForm({
+          name: contacto.name || "",
+          email: contacto.email || "",
+          phone: contacto.phone || "",
+          address: contacto.address || ""
+        });
+      }
     }
   }, [id, store.contactos]);
 
@@ -29,70 +38,84 @@ export default function AddContact() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    dispatch({ type: "START_LOADING" }); // Opcional: activar spinner
+    
     try {
       if (id) {
-        await actualizarContacto(form);
+        // Para actualizar, necesitamos el ID y los datos
+        await actualizarContacto({ ...form, id: id });
       } else {
         await crearContacto(form);
       }
-      const contactos = await obtenerContactos();
-      dispatch({ tipo: "CARGAR_CONTACTOS", contactos });
+      
+      // Sincronizamos el Context API con los datos frescos del servidor
+      const contactosActualizados = await obtenerContactos();
+      dispatch({ type: "SET_CONTACTOS", payload: contactosActualizados });
+      
       navigate("/");
     } catch (err) {
-      alert("Error: " + err.message);
+      alert("Error en la operación: " + err.message);
     }
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "600px", margin: "0 auto" }}>
-      <h2>{id ? "Editar contacto" : "Nuevo contacto"}</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          name="full_name"
-          value={form.full_name}
-          onChange={handleChange}
-          placeholder="Nombre completo"
-          required
-          style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
-        />
-        <input
-          name="email"
-          type="email"
-          value={form.email}
-          onChange={handleChange}
-          placeholder="Email"
-          style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
-        />
-        <input
-          name="phone"
-          value={form.phone}
-          onChange={handleChange}
-          placeholder="Teléfono"
-          style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
-        />
-        <input
-          name="address"
-          value={form.address}
-          onChange={handleChange}
-          placeholder="Dirección"
-          style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
-        />
-        <button
-          type="submit"
-          style={{
-            background: "#3498db",
-            color: "white",
-            border: "none",
-            padding: "10px 20px",
-            cursor: "pointer",
-            marginRight: "10px"
-          }}
-        >
-          {id ? "Guardar" : "Crear"}
-        </button>
-        <button type="button" onClick={() => navigate("/")}>
-          Cancelar
-        </button>
+    <div className="container mt-5" style={{ maxWidth: "600px" }}>
+      <h2 className="mb-4 text-center">{id ? "Editar contacto" : "Añadir nuevo contacto"}</h2>
+      <form onSubmit={handleSubmit} className="card p-4 shadow-sm">
+        <div className="mb-3">
+          <label className="form-label">Nombre Completo</label>
+          <input
+            name="name"
+            className="form-control"
+            value={form.name}
+            onChange={handleChange}
+            placeholder="Introduce el nombre"
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <label className="form-label">Email</label>
+          <input
+            name="email"
+            type="email"
+            className="form-control"
+            value={form.email}
+            onChange={handleChange}
+            placeholder="Introduce el email"
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <label className="form-label">Teléfono</label>
+          <input
+            name="phone"
+            className="form-control"
+            value={form.phone}
+            onChange={handleChange}
+            placeholder="Introduce el teléfono"
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <label className="form-label">Dirección</label>
+          <input
+            name="address"
+            className="form-control"
+            value={form.address}
+            onChange={handleChange}
+            placeholder="Introduce la dirección"
+            required
+          />
+        </div>
+        
+        <div className="d-grid gap-2">
+          <button type="submit" className="btn btn-primary">
+            {id ? "Actualizar" : "Guardar"}
+          </button>
+          <button type="button" className="btn btn-link text-secondary" onClick={() => navigate("/")}>
+            o volver a contactos
+          </button>
+        </div>
       </form>
     </div>
   );
