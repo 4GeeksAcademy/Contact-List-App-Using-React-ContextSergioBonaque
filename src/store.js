@@ -8,17 +8,24 @@ export const initialStore = () => {
 export default function storeReducer(store, action = {}) {
   switch (action.type) {
     case "SET_CONTACTOS":
-      return { ...state, contactos: action.payload, loading: false };
+      return { ...store, contactos: action.payload, loading: false };
     case "ADD_CONTACTO":
-      return { ...state, contactos: [...state.contactos, action.payload] };
+      return { ...store, contactos: [...store.contactos, action.payload] };
+    case "UPDATE_CONTACTO": 
+      return {
+        ...store,
+        contactos: store.contactos.map(c => 
+          c.id === action.payload.id ? action.payload : c
+        )
+      };
     case "DELETE_CONTACTO":
       return {
-        ...state,
-        contactos: state.contactos.filter(c => c.id !== action.payload)
+        ...store,
+        contactos: store.contactos.filter(c => c.id !== action.payload)
       };
     case "START_LOADING":
-      return { ...state, loading: true };
+      return { ...store, loading: true };
     default:
-      throw Error('Unknown action.');
+      return store; 
   }
 };
