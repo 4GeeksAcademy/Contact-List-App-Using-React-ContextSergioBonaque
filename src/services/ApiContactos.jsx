@@ -1,15 +1,23 @@
-const BASE = " https://playground.4geeks.com/contact/";
+const BASE = "https://playground.4geeks.com"; // Sin el / al final para evitar dobles slashes
 const AGENDA = "milista-sergio-28"; 
 
 export const obtenerContactos = async () => {
-  const res = await fetch(`${BASE}/agenda/${AGENDA}`);
+  // Nota: La ruta es /agendas/{slug}/contacts
+  const res = await fetch(`${BASE}/agendas/${AGENDA}/contacts`);
+  
+  if (res.status === 404) {
+    // Si la agenda no existe, la API devuelve 404. 
+    // Podrías llamar a una función para crear la agenda aquí.
+    return []; 
+  }
+  
   if (!res.ok) throw new Error("No se pudieron cargar los contactos");
   const data = await res.json();
   return data.contacts || [];
 };
-// corregir en la mentoria
+
 export const crearContacto = async (contacto) => {
-  const res = await fetch(`${BASE}/agenda/${AGENDA}`, {
+  const res = await fetch(`${BASE}/agendas/${AGENDA}/contacts`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(contacto),
@@ -19,7 +27,8 @@ export const crearContacto = async (contacto) => {
 };
 
 export const actualizarContacto = async (contacto) => {
-  const res = await fetch(`${BASE}/contact/${contacto.id}`, {
+  // El ID va al final de la ruta de contactos de esa agenda
+  const res = await fetch(`${BASE}/agendas/${AGENDA}/contacts/${contacto.id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(contacto),
@@ -29,7 +38,9 @@ export const actualizarContacto = async (contacto) => {
 };
 
 export const borrarContacto = async (id) => {
-  const res = await fetch(`${BASE}/contact/${id}`, { method: "DELETE" });
+  const res = await fetch(`${BASE}/agendas/${AGENDA}/contacts/${id}`, { 
+    method: "DELETE" 
+  });
   if (!res.ok) throw new Error("Error al borrar");
   return true;
 };
