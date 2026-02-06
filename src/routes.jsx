@@ -11,6 +11,7 @@ import { Single } from "./pages/Single";
 import { Demo } from "./pages/Demo";
 import ContactList from "./pages/ContactList";
 import AddContact from "./pages/AddContact";
+
 //tener en cuenta los nombres, si no coincidenn no funciona...
 // const routes = [
 //   { path: "/", element: <ContactList /> },
@@ -32,8 +33,10 @@ export const router = createBrowserRouter(
         {/* Nested Routes: Defines sub-routes within the BaseHome component. */}
         <Route path= "/" element={<ContactList />} />
         <Route path="/add-contact" element={<AddContact />} />
+        <Route path="/edit-contact/:id" element={<AddContact />} />
         <Route path="/single/:theId" element={ <Single />} />  {/* Dynamic route for single items */}
         <Route path="/demo" element={<Demo />} />
+        
       </Route>
     )
 );
