@@ -1,59 +1,46 @@
-// La URL DEBE incluir "/contact" para que la API de 4Geeks funcione
-const BASE = "https://playground.4geeks.com"; 
-const AGENDA = "milista-sergio-28"; 
-
+// READ - Obtener contactos
 export const obtenerContactos = async () => {
-  try {
-    const res = await fetch(`${BASE}/${AGENDA}/contacts`);
-    
-    // Si la agenda no existe (404), la creamos automáticamente
-    if (res.status === 404) {
-      console.log("Agenda no encontrada, creando...");
-      await fetch(`${BASE}/${AGENDA}`, { method: "POST" });
-      return []; // Retornamos lista vacía para evitar errores de .map()
+    try {
+        const res = await fetch("https://playground.4geeks.com");
+        if (res.status === 404) {
+            await fetch("https://playground.4geeks.com", { method: "POST" });
+            return [];
+        }
+        const data = await res.json();
+        return data.contacts || [];
+    } catch (error) {
+        return [];
     }
-    
-    if (!res.ok) throw new Error("No se pudieron cargar los contactos");
-    
-    const data = await res.json();
-    return data.contacts || []; 
-    
-  } catch (error) {
-    console.error("Error en obtenerContactos:", error);
-    return []; // Siempre retornamos un array para evitar el error de 'name'
-  }
 };
 
+// CREATE - Crear contacto
 export const crearContacto = async (contacto) => {
-  const res = await fetch(`${BASE}/${AGENDA}/contacts`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(contacto),
-  });
-  if (!res.ok) throw new Error("Error al crear contacto");
-  return await res.json();
+    // La URL debe ser completa hasta /contacts
+    const res = await fetch("https://playground.4geeks.com", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(contacto),
+    });
+    if (!res.ok) throw new Error("Error al crear");
+    return await res.json();
 };
 
+// UPDATE - Actualizar contacto
 export const actualizarContacto = async (contacto) => {
-  // El ID debe ir al final de la URL según la documentación oficial
-  const res = await fetch(`${BASE}/${AGENDA}/contacts/${contacto.id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      name: contacto.name,
-      email: contacto.email,
-      phone: contacto.phone,
-      address: contacto.address
-    }),
-  });
-  if (!res.ok) throw new Error("Error al actualizar");
-  return await res.json();
+    const res = await fetch(`https://playground.4geeks.com/${contacto.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(contacto),
+    });
+    if (!res.ok) throw new Error("Error al actualizar");
+    return await res.json();
 };
 
+// DELETE - Borrar contacto
 export const borrarContacto = async (id) => {
-  const res = await fetch(`${BASE}/${AGENDA}/contacts/${id}`, { 
-    method: "DELETE" 
-  });
-  if (!res.ok) throw new Error("Error al borrar");
-  return true;
+    const res = await fetch(`https://playground.4geeks.com/${id}`, { 
+        method: "DELETE" 
+    });
+    if (!res.ok) throw new Error("Error al borrar");
+    return true;
 };
