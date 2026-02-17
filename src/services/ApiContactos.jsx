@@ -1,19 +1,13 @@
-// Definimos la base de tu agenda específica para no repetir código
-const BASE_URL = "https://playground.4geeks.com";
+// mi error: La URL debe incluir la aplicación /contact/ y tu agenda /agendas/slug
+const BASE_URL = "https://playground.4geeks.com/contact";
+const slug = "milista-sergio-28"
 
-// READ - Obtener contactos
+// Obtener contactos
 export const obtenerContactos = async () => {
     try {
-        const res = await fetch(BASE_URL);
+        const res = await fetch(`${BASE_URL}/agendas/${slug}/contacts`); // Añadido /contacts
         
-        // Si por alguna razón la agenda se borrara (404), la intentamos crear
-        if (res.status === 404) {
-            await fetch(BASE_URL, { method: "POST" });
-            return [];
-        }
-
         const data = await res.json();
-        // La API devuelve un objeto que contiene una propiedad 'contacts'
         return data.contacts || [];
     } catch (error) {
         console.error("Error al obtener contactos:", error);
@@ -21,10 +15,9 @@ export const obtenerContactos = async () => {
     }
 };
 
-// CREATE - Crear contacto
+// Crear contacto
 export const crearContacto = async (contacto) => {
-    // IMPORTANTE: Para crear es BASE_URL + "/contacts"
-    const res = await fetch(`${BASE_URL}/contacts`, {
+    const res = await fetch(`${BASE_URL}/agendas/${slug}/contacts`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(contacto),
@@ -34,9 +27,9 @@ export const crearContacto = async (contacto) => {
     return await res.json();
 };
 
-// UPDATE - Actualizar contacto
+// Actualizar contacto
 export const actualizarContacto = async (contacto) => {
-    // La URL debe incluir el ID del contacto al final
+    // La URL debe ser /contacts/{id}
     const res = await fetch(`${BASE_URL}/contacts/${contacto.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -49,7 +42,6 @@ export const actualizarContacto = async (contacto) => {
 
 // DELETE - Borrar contacto
 export const borrarContacto = async (id) => {
-    // La URL debe incluir el ID del contacto al final
     const res = await fetch(`${BASE_URL}/contacts/${id}`, { 
         method: "DELETE" 
     });
